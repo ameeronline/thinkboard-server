@@ -1,13 +1,13 @@
-    import {RateLimit} from 'express-rate-limit';
+    import {Ratelimit} from '@upstash/ratelimit';
     import {Redis} from '@upstash/redis';
     import dotenv from 'dotenv';
 
     dotenv.config();
 
 
-    const rateLimit = RateLimit({
+    const ratelimit = new Ratelimit({
         redis: Redis.fromEnv(),
-        limiter: RateLimit.slidingWindow(10,"20 seconds")
+        limiter: Ratelimit.slidingWindow(10,"20 s")
     })
 
-    export default rateLimit;
+    export default ratelimit;
