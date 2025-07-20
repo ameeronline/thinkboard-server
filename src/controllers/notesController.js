@@ -3,9 +3,6 @@ import Note from "../../models/Note.js";
 export const getAllNotes = async (req, res) => {
   try {
     const notes = await Note.find().sort({ createdAt: -1 }); //Sort by newest first
-    if (!notes || notes.length === 0) {
-      return res.status(404).json({ message: "No notes found" });
-    }
     res.status(200).json(notes);
   } catch (error) {
     console.error("Error fetching notes:", error);
@@ -58,11 +55,13 @@ export const updateNote = async (req, res) => {
   }
 };
 
-export const deleteNote = (req, res) => {
+export const deleteNote = async (req, res) => {
   try {
     const { id } = req.params;
-    const deleteNote = Note.findOneAndDelete(id);
-    !deleteNote ? res.status(404).json({ message: "Note not found" }) : null;
+    const deletedNote = await Note.findByIdAndDelete(id);
+
+    if (!deletedNote)
+      return res.status(404).json({ message: "Note not found" });
     res.status(200).json({ message: "Note deleted successfully" });
   } catch (error) {
     console.error("Error deleting note:", error);
